@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the data from the output file
-data = np.loadtxt("yb174_2d_optimal_simulation_data.txt")
+#data = np.loadtxt("yb174_2d_optimal_simulation_data.txt")
+data = np.loadtxt("yb174_2d_mot_magnetic_simulation_data.txt")
 time = data[:, 0]
 position_x = data[:, 1]
 velocity_x = data[:, 2]
