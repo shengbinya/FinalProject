@@ -109,7 +109,7 @@ int main() {
     int numAtoms = 1000;
     double time = 0.0;
     double dt = 1e-6;
-    double simulationTime = 4e-3;
+    double simulationTime = 1e-2;
 
     // Output data file
     std::ofstream outputFile("yb174_2d_mot_simulation_data.txt");
@@ -124,8 +124,8 @@ int main() {
     std::mt19937 gen(rd());
     std::normal_distribution<> posDistX(0.0, 1e-3); // Mean 0, std dev 1mm
     std::normal_distribution<> posDistY(0.0, 1e-3);
-    std::normal_distribution<> velDistX(0.0, 1.0); // Mean 0, std dev 1m/s
-    std::normal_distribution<> velDistY(0.0, 1.0);
+    std::normal_distribution<> velDistX(1.0, 2.0); // Mean 0, std dev 1m/s
+    std::normal_distribution<> velDistY(1.0, 2.0);
 
     // Store initial and final positions and velocities for all atoms
     std::vector<std::vector<double>> initialPositionsX(numAtoms);
@@ -138,16 +138,16 @@ int main() {
     std::vector<std::vector<double>> finalVelocitiesY(numAtoms);
 
     // Laser parameters (x-direction) - these should be the *optimal* values found from a parameter sweep
-    S0_x1 = 5.0;
-    delta0_x1 = -2.0 * gamma;
-    S0_x2 = 5.0;
-    delta0_x2 = -2.0 * gamma;
+    S0_x1 = 2.5;
+    delta0_x1 = -1.0 * gamma;
+    S0_x2 = 2.5;
+    delta0_x2 = -1.0 * gamma;
 
     // Laser parameters (y-direction)
-    S0_y1 = 5.0;
-    delta0_y1 = -2.0 * gamma;
-    S0_y2 = 5.0;
-    delta0_y2 = -2.0 * gamma;
+    S0_y1 = 2.5;
+    delta0_y1 = -1.0 * gamma;
+    S0_y2 = 2.5;
+    delta0_y2 = -1.0 * gamma;
 
     // Simulate the motion of each atom
     std::vector<State> atoms(numAtoms);

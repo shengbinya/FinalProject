@@ -119,8 +119,8 @@ int main() {
     outputFile << std::fixed << std::setprecision(12);
 
     // Sweep parameters
-    std::vector<double> S0_values = {0.5, 1.0, 5.0, 10.0};
-    std::vector<double> delta0_values = {-5.0 * gamma, -4.0 * gamma, -3.0 * gamma, -2.0 * gamma, -0.5 * gamma, 5.0 * gamma, 4.0 * gamma, 3.0 * gamma, 2.0 * gamma, 0.5 * gamma};
+    std::vector<double> S0_values = {0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 6.0};
+    std::vector<double> delta0_values = {-2.5 * gamma, -2.0 * gamma, -1.5 * gamma, -1.0 * gamma, -0.5 * gamma};
 
     double minFinalVelocity = 1e9;
     double optimalS0_x1 = 0.0;

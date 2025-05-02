@@ -29,15 +29,15 @@ muPrime = (g_e - g_g) * muB
 B0 = 1.0e-3  # Tesla/meter
 
 # Laser parameters (x-direction) - these should be the *optimal* values from C++
-S0_x1 = 1.0
-delta0_x1 = -2.0 * gamma
-S0_x2 = 1.0
-delta0_x2 = -2.0 * gamma
+S0_x1 = -1.0
+delta0_x1 = 2.5 * gamma
+S0_x2 = -1.0
+delta0_x2 = 2.5 * gamma
 # Laser parameters (y-direction)
-S0_y1 = 1.0
-delta0_y1 = -2.0 * gamma
-S0_y2 = 1.0;
-delta0_y2 = -2.0 * gamma;
+S0_y1 = -1.0
+delta0_y1 = 2.5 * gamma
+S0_y2 = -1.0
+delta0_y2 = 2.5 * gamma
 
 # Time step (should match C++ code)
 dt = 1e-6
@@ -76,7 +76,7 @@ def dopplerAndZeemanForceY(x, y, vx, vy):
     return fy
 
 # Create the plots
-plt.figure(figsize=(18, 6))
+plt.figure(figsize=(18, 6))  # Increased figure size for 2 rows of plots
 
 # Plot initial and final velocity distributions
 plt.subplot(1, 3, 1)
@@ -109,17 +109,51 @@ plt.grid(True)
 plt.tight_layout()
 plt.show()
 
+# --- New figure and axes for velocity distribution evolution ---
+fig_vel_dist, ax_vel_dist = plt.subplots()
+n_bins = 20
+hist_range = (-3, 3)  # Adjust based on expected velocity range
+counts, bins, bars = ax_vel_dist.hist(initial_velocities_x, bins=n_bins, range=hist_range)
+ax_vel_dist.set_xlabel("Velocity (m/s)")
+ax_vel_dist.set_ylabel("Number of Atoms")
+ax_vel_dist.set_title("Velocity Distribution Evolution")
+ax_vel_dist.grid(True)
+ax_vel_dist.set_ylim(0, 1000) # Set the y-axis limit
+
+# Create animation of velocity distribution
+def animate_velocity_distribution(frame):
+    global initial_positions_x, initial_velocities_x, initial_positions_y, initial_velocities_y
+    for i in range(num_atoms):
+        # Euler method
+        acc_x = dopplerAndZeemanForceX(initial_positions_x[i], initial_positions_y[i], initial_velocities_x[i], initial_velocities_y[i]) / atomMass
+        initial_velocities_x[i] += dt * acc_x
+        initial_positions_x[i] += dt * initial_velocities_x[i]
+
+        acc_y = dopplerAndZeemanForceY(initial_positions_x[i], initial_positions_y[i], initial_velocities_x[i], initial_velocities_y[i]) / atomMass
+        initial_velocities_y[i] += dt * acc_y
+        initial_positions_y[i] += dt * initial_velocities_y[i]
+
+    counts, bins = np.histogram(initial_velocities_x, bins=n_bins, range=hist_range)
+    for bar, c in zip(bars, counts):
+        bar.set_height(c)
+    return bars
+
+ani_velocity = animation.FuncAnimation(fig_vel_dist, animate_velocity_distribution, frames=100, interval=100, blit=True)
+ani_velocity.save('velocity_distribution.gif', writer='pillow', fps=30)
+plt.show() #show the animation
+
+
 # Create animation of atom positions
-fig, ax = plt.subplots()
-ax.set_xlim(-0.005, 0.005)
-ax.set_ylim(-0.005, 0.005)
-scat = ax.scatter(initial_positions_x, initial_positions_y, s=10)
+fig2, ax2 = plt.subplots()
+ax2.set_xlim(-0.005, 0.005)
+ax2.set_ylim(-0.005, 0.005)
+scat = ax2.scatter(initial_positions_x, initial_positions_y, s=10)
 plt.xlabel("Position X (m)")
 plt.ylabel("Position Y (m)")
 plt.title("Atom Positions Over Time")
 plt.grid(True)
 
-def animate(frame):
+def animate_position(frame):
     global initial_positions_x, initial_velocities_x, initial_positions_y, initial_velocities_y
     for i in range(num_atoms):
         # Euler method (more stable with smaller dt)
@@ -133,6 +167,6 @@ def animate(frame):
     scat.set_offsets(np.c_[initial_positions_x, initial_positions_y])
     return (scat,)
 
-ani = animation.FuncAnimation(fig, animate, frames=100, interval=100, blit=True)
-ani.save('atom_motion.gif', writer='pillow', fps=30)
+ani_position = animation.FuncAnimation(fig2, animate_position, frames=100, interval=100, blit=True)
+ani_position.save('atom_motion.gif', writer='pillow', fps=30)
 plt.show()
